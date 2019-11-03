@@ -28,3 +28,6 @@ RUN curl -s https://releases.hashicorp.com/terraform/0.12.13/terraform_0.12.13_l
     unzip /tmp/terraform.zip -d /usr/local/bin/ && \
     rm /tmp/terraform.zip && \
     chmod +x /usr/local/bin/terraform
+
+RUN mkdir /workspace
+WORKDIR /workspace
