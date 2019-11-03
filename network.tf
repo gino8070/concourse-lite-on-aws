@@ -4,7 +4,7 @@ resource "aws_vpc" "vpc" {
   instance_tenancy     = "default"
   enable_dns_hostnames = true
 
-  tags {
+  tags = {
     Name = "${var.env_id}-vpc"
   }
 }
@@ -13,7 +13,7 @@ resource "aws_subnet" "concourse_subnet" {
   vpc_id     = "${local.vpc_id}"
   cidr_block = "${cidrsubnet(var.vpc_cidr, 8, 0)}"
 
-  tags {
+  tags = {
     Name = "${var.env_id}-concourse-subnet"
   }
 }

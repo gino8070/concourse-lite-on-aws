@@ -13,6 +13,15 @@ terraform plan -out plan
 terraform apply plan
 ```
 
+Use with docker
+
+```
+docker build -t consourse-lite-on-aws-tool .
+docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -v $PWD:/workspace concourse-lite-on-aws-tool terraform init
+docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -v $PWD:/workspace concourse-lite-on-aws-tool terraform plan -out plan
+docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -v $PWD:/workspace concourse-lite-on-aws-tool terraform apply plan
+```
+
 ```
 ./create-concourse.sh
 ```
