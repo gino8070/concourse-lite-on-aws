@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 export PUBLIC_IP=$(terraform output --json | jq -r '.external_ip.value')
 export INTERNAL_CIDR=$(terraform output --json | jq -r '.internal_cidr.value')
 export INTERNAL_GW=$(terraform output --json | jq -r '.internal_gw.value')
@@ -23,27 +24,22 @@ bosh create-env ${CONCOURSE_DEPLOYMENT}/lite/concourse.yml \
   -o <(sed 's|/instance_groups/name=web|/instance_groups/name=concourse|g' ${CONCOURSE_DEPLOYMENT}/cluster/operations/tls.yml) \
   -o <(sed 's|/instance_groups/name=web|/instance_groups/name=concourse|g' ${CONCOURSE_DEPLOYMENT}/cluster/operations/privileged-https.yml) \
   -o ${CONCOURSE_DEPLOYMENT}/cluster/operations/tls-vars.yml \
-  -o <(cat <<EOF
-# - type: replace
-#   path: /resource_pools/0/cloud_properties/instance_type
-#   value: m4.large
-# - type: replace
-#   path: /resource_pools/0/cloud_properties/spot_bid_price?
-#   value: 0.0340
+  -o <(
+cat <<EOF
 - type: replace
   path: /resource_pools/0/cloud_properties/instance_type
-  value: t2.medium
+  value: m4.large
 - type: replace
   path: /resource_pools/0/cloud_properties/spot_bid_price?
-  value: 0.0190
+  value: 0.0340
 - type: replace
   path: /resource_pools/0/cloud_properties/spot_ondemand_fallback?
   value: true
 - type: replace
   path: /resource_pools/name=vms/cloud_properties/ephemeral_disk
   value: 
-    size: 30_000
-    type: standard
+    size: 100_000
+    type: gp2
 - type: replace
   path: /disk_pools/name=disks/cloud_properties/type?
   value: standard
@@ -84,7 +80,8 @@ bosh create-env ${CONCOURSE_DEPLOYMENT}/lite/concourse.yml \
   value: 
     url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-xenial-go_agent?v=170.38
     sha1: c42f5de98fc6419f341af1732ff0c1e885a25227
-EOF) \
+EOF
+) \
   -l ${CONCOURSE_DEPLOYMENT}/versions.yml \
   --vars-store concourse-creds.yml \
   -v public_ip=${PUBLIC_IP} \
@@ -96,7 +93,8 @@ EOF) \
   -v default_security_groups="[${DEFAULT_SECURITY_GROUP}]" \
   -v region=${REGION} \
   -v external_url="https://((public_ip))" \
-  --var-file private_key=<(cat <<EOF
+  --var-file private_key=<(
+cat <<EOF
 ${PRIVATE_KEY}
 EOF
 ) \
@@ -105,4 +103,3 @@ EOF
   -v internal_ip=${INTERNALIP} \
   --state concourse-state.json \
   $@
-  

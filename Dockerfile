@@ -1,13 +1,14 @@
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 
 RUN apt-get update && apt-get install -y \
       build-essential \
       curl \
       jq \
-      libxslt1-dev \
+      libxslt-dev \
       libssl-dev \
-      libreadline7 \
-      libreadline-dev \
+      libreadline6 \
+      libreadline6-dev \
+      libxml2-dev \
       libyaml-dev \
       libsqlite3-dev \
       unzip \
@@ -20,6 +21,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN curl -L -s \
       https://github.com/cloudfoundry/bosh-cli/releases/download/v6.1.1/bosh-cli-6.1.1-linux-amd64 \
+
       -o /usr/local/bin/bosh && \
     chmod +x /usr/local/bin/bosh
 
