@@ -82,5 +82,5 @@ resource "aws_security_group_rule" "concourse_security_group_rule_allow_internet
   protocol          = "-1"
   from_port         = 0
   to_port           = 0
-  cidr_blocks       = var.concourse_inbound_cidr
+  cidr_blocks       = ["0.0.0.0/0"]
 }
